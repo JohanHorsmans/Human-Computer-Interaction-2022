@@ -8,7 +8,6 @@ import plotly.express as px
 
 st.set_page_config(layout = "wide")
 
-
 # text tools
 st.title("My funky streamlit app!")
 st.header("This is a header")
@@ -24,9 +23,6 @@ for i in range(10):
 """
 
 st.code(my_code, language = "python")
-
-# show image
-st.image("prins_joachim_foto_dm.jpg")
 
 # widgets
 
