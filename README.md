@@ -1,3 +1,1 @@
-editing
-
-testing
+This is my HCI project
