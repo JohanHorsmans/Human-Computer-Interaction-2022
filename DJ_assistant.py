@@ -32,7 +32,12 @@ Name_of_song = st.text_input("Song Name") # Input song name
 advanced = st.checkbox('Advanced features')
 
 if advanced == True:
-    tempo_max = st.slider("Max tempo?", 10, 200, None)
+    tempo = st.checkbox("tempo")
+    key = st.checkbox("key")
+    if tempo == True:
+        tempo_max = st.slider("Max tempo?", 10, 200, None)
+    if key == True:
+        key_target = st.slider("Target key?", 1, 12, None)
 
 # Don't move on with the script until you have entered names:
 
@@ -94,21 +99,77 @@ state = st.button("Find your next track") # Press when ready
 if state == False: # If go button is not pressed:
     st.write("")
 elif advanced == True: # If go button is pressed and advanced settings switch is also pressed:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max) # target_key = 6
-    #st.write(recomms)
-    st.write("You should spin:")
-    st.write(recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    st.write(recomms['tracks'][0]['name']) # song name 
-    st.write(recomms['tracks'][0]['uri']) # uri name 
+    if key == True and tempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target) # target_key = 6
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        import requests
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track (click image for link):")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    elif tempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max) # target_key = 6
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        import requests
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track (click image for link):")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    elif key == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target) # target_key = 6
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        import requests
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track (click image for link):")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    else: 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        import requests
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track (click image for link):")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")        
 else: # If go button is pressed but advanced settings switch is not pressed:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
-    #st.write(recomms)
+    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+    song_name = (recomms['tracks'][0]['name']) # song name 
+    song_uri = (recomms['tracks'][0]['uri']) # uri name 
+    image_url = recomms['tracks'][0]['album']['images'][0]['url']
+    import requests
+    img_data = requests.get(image_url).content
+    with open('image_name.jpg', 'wb') as handler:
+        handler.write(img_data)
+    st.subheader(f"Here is your next track (click image for link):")
+    st.write(f"Song: {song_name}")
+    st.write(f"By: {artist_name}")
+    st.markdown(f"[![Foo]({image_url})]({song_uri})")
 
+    
 
-    st.write("You should spin:")
-    st.write(recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    st.write(recomms['tracks'][0]['name']) # song name 
-    st.write(recomms['tracks'][0]['uri']) # uri name 
-
-
-
+# expander with info: https://docs.streamlit.io/library/api-reference/layout/st.expander
