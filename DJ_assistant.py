@@ -40,7 +40,7 @@ spotify = SpotifyAPI(client_id, client_secret)
 Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track")
 
 
-
+#st.write(Data)
 #Data = spotify.search({"track": f"{Name_of_song}"}, search_type="track")
 
 #st.markdown(Data)
@@ -72,7 +72,15 @@ from spotipy.oauth2 import SpotifyClientCredentials
 client_credentials_manager = SpotifyClientCredentials(client_id="ff0973a833764edda878ecd1a526e5e5", client_secret="17ac9bc2d757421e9be9e6bbf3a30984")
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-your_song = st.write(sp.audio_features(track_uri)[0])
+
+
+st.write(sp.audio_features(track_uri)[0])
+
+
+your_song = (sp.audio_features(track_uri)[0])
+
+st.write(your_song["tempo"])
+
 
 ## TUROIAL 1 END
 
