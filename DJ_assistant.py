@@ -1,5 +1,6 @@
 import streamlit as st
 import spotipy
+import altair as alt 
 
 def local_css(file_name):
     with open(file_name) as f:
@@ -7,9 +8,14 @@ def local_css(file_name):
 
 local_css("style.css")
 
+
+
+Types_of_Features = ("acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "tempo", "valence")
+
 st.title("DJ Assistant")
 Name_of_Artist = st.text_input("Artist Name")
 Name_of_song = st.text_input("Song Name")
+Name_of_Feat = st.selectbox("Feature", Types_of_Features)
 
 
 
@@ -70,12 +76,28 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 
 
-st.write(sp.audio_features(track_uri)[0])
+#st.write(sp.audio_features(track_uri)[0])
 
 
 your_song = (sp.audio_features(track_uri)[0])
 
 st.write(round(your_song["tempo"]))
+
+df = pd.DataFrame(your_song, index=[0])
+
+df = df.drop(['id','uri','track_href','analysis_url','type'], axis=1)
+
+df['tempo'] = int(round(df['tempo']))
+
+#df = df.T
+df = df.rename({0: "Value"})
+
+st.dataframe(df)
+
+
+
+
+
 
 
 ## TUROIAL 1 END
@@ -85,9 +107,8 @@ st.write(round(your_song["tempo"]))
 #Guide: https://spotipy.readthedocs.io/en/2.19.0/?highlight=recommend#spotipy.client.Spotify.recommendations
 
 
-list = [track_uri]
 
-st.write(track_uri)
+#st.write(track_uri)
 
 
 #if  st.button("Do u you wanna customize?"):
@@ -99,6 +120,9 @@ st.write(track_uri)
 #        recomms = sp.recommendations(seed_tracks = list, limit=1, min_tempo = tempo_max)
 #        st.write(recomms)
 #else: recomms = sp.recommendations(seed_tracks = list, limit=1)
+
+list = [track_uri]
+
 
 if st.checkbox('Click me'):
     tempo_max = st.slider("Max tempo?", 10, 200, None)
@@ -144,7 +168,7 @@ Sort_DF = Full_Data.sort_values(by=['Popularity'], ascending=False)
 
 chart_df = Sort_DF[['Artist', 'Album Name', 'Song Name', 'Release Date', 'Popularity', f'{Name_of_Feat}']]
 
-import altair as alt
+# Import altair
 
 feat_header = Name_of_Feat.capitalize()
 
