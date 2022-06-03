@@ -14,6 +14,19 @@ st.title("Spotify Features App")
 Name_of_Artist = st.text_input("Artist Name")
 Name_of_song = st.text_input("Song Name")
 Name_of_Feat = st.selectbox("Feature", Types_of_Features)
+
+
+
+#######
+#if st.button("Dou you wanna customize?"):
+ #   st.write("Good choice!")
+ #   tempo_max = st.slider("Max tempo?", 10, 200, 120)
+
+
+# Når knappen ikke er trykket ned, så er værdien none.
+
+#######
+
 button_clicked = st.button("OK")
 
 from spotipy_client import *
@@ -59,7 +72,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 client_credentials_manager = SpotifyClientCredentials(client_id="ff0973a833764edda878ecd1a526e5e5", client_secret="17ac9bc2d757421e9be9e6bbf3a30984")
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-st.write(sp.audio_features(track_uri)[0])
+your_song = st.write(sp.audio_features(track_uri)[0])
 
 ## TUROIAL 1 END
 
@@ -72,9 +85,33 @@ list = [track_uri]
 
 st.write(track_uri)
 
-recomms = sp.recommendations(seed_tracks = list, limit=1)
-st.write(recomms)
 
+#if  st.button("Do u you wanna customize?"):
+#    st.write("Good choice!")
+#    tempo_max = st.slider("Max tempo?", 10, 200, None)
+#    if tempo_max == None:
+#        print("please chose")
+#    else:
+#        recomms = sp.recommendations(seed_tracks = list, limit=1, min_tempo = tempo_max)
+#        st.write(recomms)
+#else: recomms = sp.recommendations(seed_tracks = list, limit=1)
+
+if st.checkbox('Click me'):
+    tempo_max = st.slider("Max tempo?", 10, 200, None)
+    if st.button("Ready?"):
+        recomms = sp.recommendations(seed_tracks = list, limit=1, max_tempo = tempo_max)
+        st.write(recomms)
+    else: st.write("waiting")
+
+else: 
+    recomms = sp.recommendations(seed_tracks = list, limit=1)
+    st.write(recomms)
+
+
+#recomms = sp.recommendations(seed_tracks = list, limit=1, max_tempo = tempo_max, max_key = 6, min_key = 3)
+#st.write(recomms)
+
+# max_key = 6 betyder at den aldrig kommer op på 6. Dvs. den ægte max key er 5. Det er ikke inklusiv tallet.
 
 
 ##
