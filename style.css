@@ -4,9 +4,9 @@ body {
 }
 
 .stButton>button {
-    color: #1e221e;
-    border-radius: 50%;
+    color: #dce2dc;
+    border-radius: 0%;
     border-color: aquamarine;
     height: 3em;
-    width: 3em;
+    width: 10em;
 }
