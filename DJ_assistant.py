@@ -94,9 +94,21 @@ state = st.button("Find your next track") # Press when ready
 if state == False: # If go button is not pressed:
     st.write("")
 elif advanced == True: # If go button is pressed and advanced settings switch is also pressed:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max)
-    st.write(recomms)
+    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max) # target_key = 6
+    #st.write(recomms)
+    st.write("You should spin:")
+    st.write(recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+    st.write(recomms['tracks'][0]['name']) # song name 
+    st.write(recomms['tracks'][0]['uri']) # uri name 
 else: # If go button is pressed but advanced settings switch is not pressed:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
-    st.write(recomms)
+    #st.write(recomms)
+
+
+    st.write("You should spin:")
+    st.write(recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+    st.write(recomms['tracks'][0]['name']) # song name 
+    st.write(recomms['tracks'][0]['uri']) # uri name 
+
+
 
