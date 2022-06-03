@@ -7,13 +7,9 @@ def local_css(file_name):
 
 local_css("style.css")
 
-
-Types_of_Features = ("acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "tempo", "valence")
-
-st.title("Spotify Features App")
+st.title("DJ Assistant")
 Name_of_Artist = st.text_input("Artist Name")
 Name_of_song = st.text_input("Song Name")
-Name_of_Feat = st.selectbox("Feature", Types_of_Features)
 
 
 
@@ -79,7 +75,7 @@ st.write(sp.audio_features(track_uri)[0])
 
 your_song = (sp.audio_features(track_uri)[0])
 
-st.write(your_song["tempo"])
+st.write(round(your_song["tempo"]))
 
 
 ## TUROIAL 1 END
