@@ -1,6 +1,8 @@
 import streamlit as st
 import spotipy
 import altair as alt 
+from spotipy_client import *
+import pandas as pd
 
 def local_css(file_name):
     with open(file_name) as f:
@@ -8,97 +10,86 @@ def local_css(file_name):
 
 local_css("style.css")
 
-
-
-Types_of_Features = ("acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "tempo", "valence")
-
-
 st.markdown("<h1 style='text-align: center; color: white;'>DJ Assistant</h1>", unsafe_allow_html=True)
 
 #st.title("DJ Assistant")
 Name_of_Artist = st.text_input("Artist Name")
 Name_of_song = st.text_input("Song Name")
-Name_of_Feat = st.selectbox("Feature", Types_of_Features)
+
+if len(Name_of_Artist) == 0:
+    st.write("Hello! Welcome to my app")
+elif len(Name_of_song) == 0:
+    st.write("Hello! Welcome to my app")
+else:
+        
+        
+
+
+    #button_clicked = st.button("OK")
+
+
+    client_id = 'ff0973a833764edda878ecd1a526e5e5'
+    client_secret = '17ac9bc2d757421e9be9e6bbf3a30984'
+
+    spotify = SpotifyAPI(client_id, client_secret)
+
+    Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track")
+
+    need = []
+    for i, item in enumerate(Data['tracks']['items']):
+        track = item['album']
+        song_name = item['name']
+        track_uri = item["uri"]
+        #explicit = item['explicit']
+        need.append((i, track['artists'][0]['name'], song_name, track['release_date']))
+
+
+    st.write(need[0][1])
+    st.write(need[0][2])
+    st.write(need[0][3])
 
 
 
-#######
-#if st.button("Dou you wanna customize?"):
- #   st.write("Good choice!")
- #   tempo_max = st.slider("Max tempo?", 10, 200, 120)
+    #st.write(Data)
+    #Data = spotify.search({"track": f"{Name_of_song}"}, search_type="track")
+
+    #st.markdown(Data)
+
+    #st.dataframe(data=Data, width=None, height=None)
 
 
-# Når knappen ikke er trykket ned, så er værdien none.
+    #st.write(track) 
 
-#######
+    #st.markdown(need)
 
-button_clicked = st.button("OK")
+    #st.write(track_uri)
 
-from spotipy_client import *
-import pandas as pd
+    ## TUTORIAL 1:
+    import spotipy
+    from spotipy.oauth2 import SpotifyClientCredentials
 
-client_id = 'ff0973a833764edda878ecd1a526e5e5'
-client_secret = '17ac9bc2d757421e9be9e6bbf3a30984'
-
-spotify = SpotifyAPI(client_id, client_secret)
-
-Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track")
-
-need = []
-for i, item in enumerate(Data['tracks']['items']):
-    track = item['album']
-    song_name = item['name']
-    track_uri = item["uri"]
-    #explicit = item['explicit']
-    need.append((i, track['artists'][0]['name'], song_name, track['release_date']))
-
-
-st.write(need[0][1])
-st.write(need[0][2])
-st.write(need[0][3])
+    client_credentials_manager = SpotifyClientCredentials(client_id="ff0973a833764edda878ecd1a526e5e5", client_secret="17ac9bc2d757421e9be9e6bbf3a30984")
+    sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 
 
-#st.write(Data)
-#Data = spotify.search({"track": f"{Name_of_song}"}, search_type="track")
-
-#st.markdown(Data)
-
-#st.dataframe(data=Data, width=None, height=None)
+    #st.write(sp.audio_features(track_uri)[0])
 
 
-#st.write(track) 
+    your_song = (sp.audio_features(track_uri)[0])
 
-#st.markdown(need)
+    st.write(round(your_song["tempo"]))
 
-#st.write(track_uri)
+    df = pd.DataFrame(your_song, index=[0])
 
-## TUTORIAL 1:
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+    df = df.drop(['id','uri','track_href','analysis_url','type'], axis=1)
 
-client_credentials_manager = SpotifyClientCredentials(client_id="ff0973a833764edda878ecd1a526e5e5", client_secret="17ac9bc2d757421e9be9e6bbf3a30984")
-sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
+    df['tempo'] = int(round(df['tempo']))
 
+    #df = df.T
+    df = df.rename({0: "Value"})
 
-
-#st.write(sp.audio_features(track_uri)[0])
-
-
-your_song = (sp.audio_features(track_uri)[0])
-
-st.write(round(your_song["tempo"]))
-
-df = pd.DataFrame(your_song, index=[0])
-
-df = df.drop(['id','uri','track_href','analysis_url','type'], axis=1)
-
-df['tempo'] = int(round(df['tempo']))
-
-#df = df.T
-df = df.rename({0: "Value"})
-
-st.dataframe(df)
+    st.dataframe(df)
 
 
 
@@ -127,19 +118,19 @@ st.dataframe(df)
 #        st.write(recomms)
 #else: recomms = sp.recommendations(seed_tracks = list, limit=1)
 
-list = [track_uri]
+    list = [track_uri]
 
 
-if st.checkbox('Click me'):
-    tempo_max = st.slider("Max tempo?", 10, 200, None)
-    if st.button("Ready?"):
-        recomms = sp.recommendations(seed_tracks = list, limit=1, max_tempo = tempo_max)
+    if st.checkbox('Click me'):
+        tempo_max = st.slider("Max tempo?", 10, 200, None)
+        if st.button("Ready?"):
+            recomms = sp.recommendations(seed_tracks = list, limit=1, max_tempo = tempo_max)
+            st.write(recomms)
+        else: st.write("waiting")
+
+    else: 
+        recomms = sp.recommendations(seed_tracks = list, limit=1)
         st.write(recomms)
-    else: st.write("waiting")
-
-else: 
-    recomms = sp.recommendations(seed_tracks = list, limit=1)
-    st.write(recomms)
 
 
 #recomms = sp.recommendations(seed_tracks = list, limit=1, max_tempo = tempo_max, max_key = 6, min_key = 3)
