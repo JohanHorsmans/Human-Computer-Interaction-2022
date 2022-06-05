@@ -81,3 +81,13 @@ st.write("valence: A measure from 0.0 to 1.0 describing the musical positiveness
 
 
 st.write("Information about features is from:  https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/")
+
+#
+    if audiofeature == True:
+        name_of_feat = st.selectbox("Selcet your auditory feature", Types_of_Features)
+        feature_min = st.slider("Minimum BPM", 0, 1, None)
+        if st.checkbox("Description of audio features"):
+            "- Hello world"
+            "- sd "
+            "- asda"
+            "- bla bla bla"

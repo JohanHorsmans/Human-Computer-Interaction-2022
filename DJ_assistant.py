@@ -23,11 +23,8 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 
 # Main part of the script: 
-Types_of_Features = ("danceability", "energy", "valence", "instrumentalness")
 
-
-
-st.markdown("<h1 style='text-align: center; color: white;'>DJ Assistant</h1>", unsafe_allow_html=True) # Header
+st.markdown("<h1 style='text-align: center; color: white;'>DJ ASSISTANT</h1>", unsafe_allow_html=True) # Header
 Name_of_Artist = st.text_input("Artist Name") # Input artist name
 Name_of_song = st.text_input("Song Name") # Input song name
 
@@ -36,35 +33,13 @@ with st.expander("Advanced features"):
     mintempo = st.checkbox("Minimum BPM")
     maxtempo = st.checkbox("Maximum BPM")
     key = st.checkbox("Same key")
-    audiofeature = st.checkbox("Auditory feature")
     if mintempo == True:
-        tempo_min = st.slider("Minimum BPM", 10, 200, None)
+        tempo_min = st.slider("Minimum BPM", 50, 250, None)
     if maxtempo == True:
-        tempo_max = st.slider("Maximum BPM", 10, 200, None)
-    if audiofeature == True:
-        name_of_feat = st.selectbox("Selcet your auditory feature", Types_of_Features)
-        if st.checkbox("Description of audio features"):
-            "- Hello world"
-            "- sd "
-            "- asda"
-            "- bla bla bla"
+        tempo_max = st.slider("Maximum BPM", 50, 250, None)
 
-
-
-#st.write(Name_of_Feat)
-
-#advanced = st.checkbox('Advanced features')
-
-#if advanced == True:
-#    tempo = st.checkbox("tempo")
-#    key = st.checkbox("key")
-#    if tempo == True:
-#        tempo_max = st.slider("Max tempo?", 10, 200, None)
-#    if key == True:
-#        key_target = st.slider("Target key?", 1, 12, None)
 
 # Don't move on with the script until you have entered names:
-
 if len(Name_of_Artist) == 0: 
     st.write("Hello! Welcome to my app - please, enter the artist name") 
 elif len(Name_of_song) == 0:
@@ -81,10 +56,6 @@ else: # Names are specified -> move on.
         track_uri = info["uri"] # Save link for song.
         metadata.append((song, track['artists'][0]['name'], song_name, track['release_date'])) # Append artist name, song name and release date to metadata-list.
 
-    #st.write(metadata[0][1]) # Sanity check
-    #st.write(metadata[0][2]) # Sanity check
-    #st.write(metadata[0][3]) # Sanity check
-
     # Load audio features for song:
     your_song_feats = (sp.audio_features(track_uri)[0])
 
@@ -94,16 +65,45 @@ else: # Names are specified -> move on.
     df = pd.DataFrame(your_song_feats, index=[0])
 
     # Dataframe cleaning:
-    df = df.drop(['id','uri','track_href','analysis_url','type'], axis=1)
+    df = df.drop(['id','uri','track_href','analysis_url','type', 'danceability', 'energy', 'loudness', 'mode','speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'time_signature'], axis=1)
 
     df['tempo'] = int(round(df['tempo']))
 
     df = df.rename({0: "Value"})
+    df = df.rename(columns = {'key': "Key", "tempo": "Tempo", "duration_ms": "Duration"})
+
+
+    # Specify key
+    if key == True:
+        key_target = int(df['Key'])
+        #st.write(key_target)
+
+    #print(key_target)
+
 
     # Display dataframe.
     #st.dataframe(df) # Sanity check
 
     track_uri = [track_uri]
+    
+    
+    l = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+    d = dict([(y,x) for x,y in enumerate(l)])
+    inv_map = {v: k for k, v in d.items()}
+
+    df['Key'] = inv_map[int(df['Key'])]
+    #st.write(int(key_target))
+
+
+    #####
+    # Convert from ms to m:s.
+    ms = int(df['Duration'])
+    seconds, ms = divmod(ms, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    df['Duration'] = f'{int(minutes):01d}:{int(seconds):02d}'
+
+    
+    #####
     
     st.write("Your song info:")
     st.dataframe(df)
@@ -111,13 +111,10 @@ else: # Names are specified -> move on.
 
 
 
-    if key == True:
-        key_target = df['key']
-        #st.write(key_target)
+
         
 
 # Info:
-
 
 # Add activation button:
 state = st.button("Find your next track") # Press when ready
@@ -136,24 +133,11 @@ elif key == True and mintempo == True and maxtempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
-elif key == True and mintempo == True and maxtempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) # target_key = 6
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    import requests
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif key == True and mintempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -164,10 +148,11 @@ elif key == True and mintempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif key == True and maxtempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -178,10 +163,11 @@ elif key == True and maxtempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif mintempo == True and maxtempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -192,10 +178,11 @@ elif mintempo == True and maxtempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif mintempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -206,10 +193,11 @@ elif mintempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif maxtempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -220,10 +208,11 @@ elif maxtempo == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 elif key == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -234,10 +223,11 @@ elif key == True:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")   
+    st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 else: # If go button is pressed but advanced settings switch is not pressed:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
@@ -248,11 +238,26 @@ else: # If go button is pressed but advanced settings switch is not pressed:
     img_data = requests.get(image_url).content
     with open('image_name.jpg', 'wb') as handler:
         handler.write(img_data)
-    st.subheader(f"Here is your next track (click image for link):")
+    st.subheader(f"Here is your next track:")
     st.write(f"Song: {song_name}")
     st.write(f"By: {artist_name}")
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
+    st.caption("Click image for redirection to Spotify.")
 
-    
+
+
+with st.expander("How to use"):
+    st.subheader("Welcome to DJ ASSISTANT — Your new tool for creating amazing DJ-sets!")
+    st.write("DJ ASSISTANT is an AI-based song recommender that can assist you in creating a coherent and streamlined DJ-set without ever being afraid of embarrassing crossfades. All you need to get started is a song that you like. DJ ASSISTANT will then proceed to recommend a similar song that you can use as the next song for your set.")
+    st.write("It works like this:")
+    st.write("1. Specify the artist and song name for a track that you like.")
+    st.write("2. If you want the recommended song to be in the same key* or have specific BPM requirements, you can specify this under 'Advanced features'.")
+    st.write("3. Press the 'Find your next track'-button to let DJ ASSISTANT work its magic.") 
+    st.write("4. Click on the song artwork for a direct redirection to the song on Spotify.") 
+    st.write(" ")
+    st.caption("NOTE: You can find the BPM, key and duration of your self-chosen track in the table that appears when you have specified artist- and song name")
+    st.caption("*: DJ ASSISTANT does currently not discriminate minor and major keys and will only filter based on the 'root'-key (e.g. G or C#).")
+
+
 
 # expander with info: https://docs.streamlit.io/library/api-reference/layout/st.expander
