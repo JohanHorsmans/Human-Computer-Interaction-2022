@@ -23,6 +23,9 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 
 # Main part of the script: 
+Types_of_Features = ("danceability", "energy", "valence", "instrumentalness")
+
+
 
 st.markdown("<h1 style='text-align: center; color: white;'>DJ Assistant</h1>", unsafe_allow_html=True) # Header
 Name_of_Artist = st.text_input("Artist Name") # Input artist name
@@ -33,11 +36,22 @@ with st.expander("Advanced features"):
     mintempo = st.checkbox("Minimum BPM")
     maxtempo = st.checkbox("Maximum BPM")
     key = st.checkbox("Same key")
+    audiofeature = st.checkbox("Auditory feature")
     if mintempo == True:
         tempo_min = st.slider("Minimum BPM", 10, 200, None)
     if maxtempo == True:
         tempo_max = st.slider("Maximum BPM", 10, 200, None)
+    if audiofeature == True:
+        name_of_feat = st.selectbox("Selcet your auditory feature", Types_of_Features)
+        if st.checkbox("Description of audio features"):
+            "- Hello world"
+            "- sd "
+            "- asda"
+            "- bla bla bla"
 
+
+
+#st.write(Name_of_Feat)
 
 #advanced = st.checkbox('Advanced features')
 
@@ -112,6 +126,20 @@ state = st.button("Find your next track") # Press when ready
 if state == False: # If go button is not pressed:
     st.write("")
 #elif advanced == True: # If go button is pressed and advanced settings switch is also pressed:
+elif key == True and mintempo == True and maxtempo == True:
+    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) # target_key = 6
+    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+    song_name = (recomms['tracks'][0]['name']) # song name 
+    song_uri = (recomms['tracks'][0]['uri']) # uri name 
+    image_url = recomms['tracks'][0]['album']['images'][0]['url']
+    import requests
+    img_data = requests.get(image_url).content
+    with open('image_name.jpg', 'wb') as handler:
+        handler.write(img_data)
+    st.subheader(f"Here is your next track (click image for link):")
+    st.write(f"Song: {song_name}")
+    st.write(f"By: {artist_name}")
+    st.markdown(f"[![Foo]({image_url})]({song_uri})")
 elif key == True and mintempo == True and maxtempo == True:
     recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) # target_key = 6
     artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
