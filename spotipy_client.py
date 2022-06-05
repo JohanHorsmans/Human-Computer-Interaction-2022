@@ -3,6 +3,7 @@ import datetime
 from urllib.parse import urlencode
 import requests
 
+# Specifying functions for Spotify API:
 class SpotifyAPI(object):
   access_token = None
   access_token_expires = datetime.datetime.now()
