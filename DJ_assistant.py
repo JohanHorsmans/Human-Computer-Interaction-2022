@@ -73,15 +73,13 @@ else: # Names are specified -> move on.
     metadata = [] # Create empty list for metadata.
 
     # Data is saved as nested dictionary. Create loop for saving info for the selected song.
-    try:
-        for song, info in enumerate(Data['tracks']['items']):
-            track = info['album'] # Save track info.
-            song_name = info['name'] # Save song name.
-            track_uri = info["uri"] # Save link for song.
-            metadata.append((song, track['artists'][0]['name'], song_name, track['release_date'])) # Append artist name, song name and release date to metadata-list.
-    except NameError:
-        st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
-    # Make track link a list (required by the API):
+    for song, info in enumerate(Data['tracks']['items']):
+        track = info['album'] # Save track info.
+        song_name = info['name'] # Save song name.
+        track_uri = info["uri"] # Save link for song.
+        metadata.append((song, track['artists'][0]['name'], song_name, track['release_date'])) # Append artist name, song name and release date to metadata-list.
+    
+    # Add "try" to create error message in case of misspelled song.
     try:
         track_uri = [track_uri]
         # Load audio features for song:
@@ -133,455 +131,201 @@ else: # Names are specified -> move on.
 state = st.button("Find your next track") # Press when ready
 
 
-# Specify what buttons do:
-if state == False: # If go button is not pressed:
-    st.write("") # Do nothing.
-# If button is pressed and advanced settings switch is also pressed (various combinations of advanced feature-specifications are taken into account in the following loops):
-# Four combinations:
-elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': # Specify which features should be specified for this specific sequence of code to be run.
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) # Recommend new song.
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # Define artist name.
-    song_name = (recomms['tracks'][0]['name']) # Define song name. 
-    song_uri = (recomms['tracks'][0]['uri']) # Define uri link. 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] # Define artwork link.
-    # Convert image url to image-array usable in Python.
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    # Display song and info to the user:
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    # Making hyperlink image redirecting to the song on Spotify.
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-    #### The above comment specifications are the same for the remaining if/else statements and are therefore left out ####
-elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name'])
-    song_uri = (recomms['tracks'][0]['uri'])  
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-#### Triple combinations: 
-elif key == True and mintempo == True and maxtempo == True: 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Danceability': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_danceability = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Energy': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name'])  
-    song_uri = (recomms['tracks'][0]['uri'])
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Valence':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name'])
-    song_uri = (recomms['tracks'][0]['uri'])
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name'])
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_danceability = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
-    song_name = (recomms['tracks'][0]['name']) 
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_energy = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name'])
-    song_uri = (recomms['tracks'][0]['uri'])
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
-    song_name = (recomms['tracks'][0]['name'])
-    song_uri = (recomms['tracks'][0]['uri']) 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content 
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-# Double combinations:
-elif key == True and mintempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and maxtempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and maxtempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and audiofeat == True and name_of_feat == 'Danceability':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_danceability = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and audiofeat == True and name_of_feat == 'Energy':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif mintempo == True and audiofeat == True and name_of_feat == 'Valence':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_valence = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif maxtempo == True and audiofeat == True and name_of_feat == 'Danceability':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_danceability = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif maxtempo == True and audiofeat == True and name_of_feat == 'Energy':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif maxtempo == True and audiofeat == True and name_of_feat == 'Valence':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_valence = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and audiofeat == True and name_of_feat == 'Danceability':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_danceability = feature_min)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and audiofeat == True and name_of_feat == 'Energy':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True and audiofeat == True and name_of_feat == 'Valence':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-# Single combinations:
-elif mintempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif maxtempo == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif key == True:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif audiofeat == True and name_of_feat == 'Valence':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_valence = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif audiofeat == True and name_of_feat == 'Energy':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_energy = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-elif audiofeat == True and name_of_feat == 'Danceability':
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_danceability = feature_min) 
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
-else: # If go button is pressed but advanced settings switches are not pressed:
-    try:
-        recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
+try:
+    # If button is pressed and advanced settings switch is also pressed (various combinations of advanced feature-specifications are taken into account in the following loops):
+    if state == False: # If go button is not pressed:
+        st.write("") # Do nothing.
+    # Four combinations:
+    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': # Specify which features should be specified for this specific sequence of code to be run.
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) # Recommend new song.
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # Define artist name.
+        song_name = (recomms['tracks'][0]['name']) # Define song name. 
+        song_uri = (recomms['tracks'][0]['uri']) # Define uri link. 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] # Define artwork link.
+        # Convert image url to image-array usable in Python.
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        # Display song and info to the user:
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        # Making hyperlink image redirecting to the song on Spotify.
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+        #### The above comment specifications are the same for the remaining if/else statements and are therefore left out ####
+    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name'])
+        song_uri = (recomms['tracks'][0]['uri'])  
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    #### Triple combinations: 
+    elif key == True and mintempo == True and maxtempo == True: 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_danceability = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Energy': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name'])  
+        song_uri = (recomms['tracks'][0]['uri'])
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Valence':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name'])
+        song_uri = (recomms['tracks'][0]['uri'])
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name'])
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_danceability = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
+        song_name = (recomms['tracks'][0]['name']) 
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url'] 
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_energy = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name'])
+        song_uri = (recomms['tracks'][0]['uri'])
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
+        song_name = (recomms['tracks'][0]['name'])
+        song_uri = (recomms['tracks'][0]['uri']) 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content 
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    # Double combinations:
+    elif key == True and mintempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
         song_uri = (recomms['tracks'][0]['uri']) # uri name 
@@ -594,8 +338,263 @@ else: # If go button is pressed but advanced settings switches are not pressed:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    except NameError:
+    elif key == True and maxtempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and maxtempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and audiofeat == True and name_of_feat == 'Danceability':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_danceability = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and audiofeat == True and name_of_feat == 'Energy':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif mintempo == True and audiofeat == True and name_of_feat == 'Valence':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_valence = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif maxtempo == True and audiofeat == True and name_of_feat == 'Danceability':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_danceability = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif maxtempo == True and audiofeat == True and name_of_feat == 'Energy':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif maxtempo == True and audiofeat == True and name_of_feat == 'Valence':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_valence = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and audiofeat == True and name_of_feat == 'Danceability':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_danceability = feature_min)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and audiofeat == True and name_of_feat == 'Energy':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True and audiofeat == True and name_of_feat == 'Valence':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    # Single combinations:
+    elif mintempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif maxtempo == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif key == True:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, target_key = key_target) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif audiofeat == True and name_of_feat == 'Valence':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_valence = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif audiofeat == True and name_of_feat == 'Energy':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_energy = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    elif audiofeat == True and name_of_feat == 'Danceability':
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_danceability = feature_min) 
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    else: # If go button is pressed but advanced settings switches are not pressed:
+            recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
+            artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+            song_name = (recomms['tracks'][0]['name']) # song name 
+            song_uri = (recomms['tracks'][0]['uri']) # uri name 
+            image_url = recomms['tracks'][0]['album']['images'][0]['url']
+            img_data = requests.get(image_url).content
+            with open('image_name.jpg', 'wb') as handler:
+                handler.write(img_data)
+            st.subheader(f"Here is your next track:")
+            st.write(f"Song: {song_name}")
+            st.write(f"By: {artist_name}")
+            st.markdown(f"[![Foo]({image_url})]({song_uri})")
+            st.caption("Click image for redirection to Spotify.")
+except (NameError):
         st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
+except IndexError:
+        st.error("Seems that you went just a bit to far with your filtering. You need to make it just a little less conservative...")
 
 
 
