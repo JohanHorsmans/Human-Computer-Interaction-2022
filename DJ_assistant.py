@@ -591,7 +591,7 @@ try:
             st.write(f"By: {artist_name}")
             st.markdown(f"[![Foo]({image_url})]({song_uri})")
             st.caption("Click image for redirection to Spotify.")
-except (NameError):
+except NameError:
         st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
 except IndexError:
         st.error("Seems that you went just a bit to far with your filtering. You need to make it just a little less conservative...")
