@@ -44,7 +44,7 @@ with st.expander("Advanced features"): # Unfold advanced features.
     mintempo = st.checkbox("Minimum BPM.") # Checkbox for min BPM.
     maxtempo = st.checkbox("Maximum BPM.") # Checkbox for max BPM.
     key = st.checkbox("Same key.") # Checkbox for same key.
-    audiofeat = st.checkbox("Auditory Feature.") # Checkbox for same key.
+    audiofeat = st.checkbox("Minimum auditory feature.") # Checkbox for same key.
 
     if mintempo == True: # If min BPM ticked...
         tempo_min = st.slider("Minimum BPM:", 50, 250, None) # ... Present slider for specifying value.
@@ -55,8 +55,8 @@ with st.expander("Advanced features"): # Unfold advanced features.
         feature_min = st.slider("Minimum value", 0.0, 1.0, None)
         if st.checkbox("Show description of audio features:"):
             st.caption("- Danceability: Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.")
-            st.caption("- energy: Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.")
-            st.caption("- valence: A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).")
+            st.caption("- Energy: Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.")
+            st.caption("- Valence: A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).")
             st.caption("- Source: https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/")
             st.write("")
 
@@ -69,58 +69,65 @@ elif len(Name_of_song) == 0:
 else: # Names are specified -> move on.
     Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track") # Load the data for the specified track.
 
+
     metadata = [] # Create empty list for metadata.
 
     # Data is saved as nested dictionary. Create loop for saving info for the selected song.
-    for song, info in enumerate(Data['tracks']['items']):
-        track = info['album'] # Save track info.
-        song_name = info['name'] # Save song name.
-        track_uri = info["uri"] # Save link for song.
-        metadata.append((song, track['artists'][0]['name'], song_name, track['release_date'])) # Append artist name, song name and release date to metadata-list.
-
+    try:
+        for song, info in enumerate(Data['tracks']['items']):
+            track = info['album'] # Save track info.
+            song_name = info['name'] # Save song name.
+            track_uri = info["uri"] # Save link for song.
+            metadata.append((song, track['artists'][0]['name'], song_name, track['release_date'])) # Append artist name, song name and release date to metadata-list.
+    except NameError:
+        st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
     # Make track link a list (required by the API):
-    track_uri = [track_uri]
-    
-    # Load audio features for song:
-    your_song_feats = (sp.audio_features(track_uri)[0])
+    try:
+        track_uri = [track_uri]
+        # Load audio features for song:
+        your_song_feats = (sp.audio_features(track_uri)[0])
 
-    #st.write(round(your_song_feats["tempo"])) # Sanity check
+        #st.write(round(your_song_feats["tempo"])) # Sanity check
 
-    # Save features as dataframe:
-    df = pd.DataFrame(your_song_feats, index=[0])
+        # Save features as dataframe:
+        df = pd.DataFrame(your_song_feats, index=[0])
 
-    # Dataframe cleaning:
-    df = df.drop(['id','uri','track_href','analysis_url','type', 'loudness', 'mode', 'speechiness', 'acousticness', 'liveness', 'time_signature', 'instrumentalness'], axis=1) # Removing irrelevant columns
-    df['tempo'] = int(round(df['tempo'])) # Rounding tempo (otherwise it would be specified with 3 decimals which is ridiculous).
-    df = df.rename({0: "Info:"}) # Rename row label.
-    df = df.rename(columns = {'key': "Key", "tempo": "BPM", "duration_ms": "Duration", 'danceability': 'Danceability', 'energy': 'Energy', 'valence': 'Valence'}) # Rename column labels.
+        # Dataframe cleaning:
+        df = df.drop(['id','uri','track_href','analysis_url','type', 'loudness', 'mode', 'speechiness', 'acousticness', 'liveness', 'time_signature', 'instrumentalness'], axis=1) # Removing irrelevant columns
+        df['tempo'] = int(round(df['tempo'])) # Rounding tempo (otherwise it would be specified with 3 decimals which is ridiculous).
+        df = df.rename({0: "Info:"}) # Rename row label.
+        df = df.rename(columns = {'key': "Key", "tempo": "BPM", "duration_ms": "Duration", 'danceability': 'Danceability', 'energy': 'Energy', 'valence': 'Valence'}) # Rename column labels.
 
-    # Specify song key (if checkbox 'Same key' is ticked).
-    if key == True:
-        key_target = int(df['Key'])
+        # Specify song key (if checkbox 'Same key' is ticked).
+        if key == True:
+            key_target = int(df['Key'])
 
-    # Define list with keys (Spotify API gives keys as integers rather than the correct 'musical' notation).        
-    l = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
-    d = dict([(y,x) for x,y in enumerate(l)]) # Make dictionary which maps API keys to 'correct' keys.
-    inv_map = {v: k for k, v in d.items()} # Invert dictionary labels for indexing purposes.
+        # Define list with keys (Spotify API gives keys as integers rather than the correct 'musical' notation).        
+        l = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+        d = dict([(y,x) for x,y in enumerate(l)]) # Make dictionary which maps API keys to 'correct' keys.
+        inv_map = {v: k for k, v in d.items()} # Invert dictionary labels for indexing purposes.
 
-    #Transform key to 'correct' notation:
-    df['Key'] = inv_map[int(df['Key'])]
+        #Transform key to 'correct' notation:
+        df['Key'] = inv_map[int(df['Key'])]
 
-    # Convert duration of song from ms to minutes and seconds.
-    ms = int(df['Duration']) # Define the length of the song in ms.
-    seconds, ms = divmod(ms, 1000) 
-    minutes, seconds = divmod(seconds, 60)
-    df['Duration'] = f'{int(minutes):01d}:{int(seconds):02d}'
+        # Convert duration of song from ms to minutes and seconds.
+        ms = int(df['Duration']) # Define the length of the song in ms.
+        seconds, ms = divmod(ms, 1000) 
+        minutes, seconds = divmod(seconds, 60)
+        df['Duration'] = f'{int(minutes):01d}:{int(seconds):02d}'
 
-    # Reorder columns:
+        # Reorder columns:
+        df = df[['Key', 'BPM' ,"Danceability","Energy","Valence", "Duration"]]
 
-    # Present user with info about the chosen song:    
-    st.write(f"Info about '{Name_of_song}' by {Name_of_Artist}:")
-    st.dataframe(df)
 
-    # Guiding the user:
-    st.write("Press the button below when you are ready to find your next track.")
+        # Present user with info about the chosen song:    
+        st.write(f"Info about '{Name_of_song}' by {Name_of_Artist}:")
+        st.dataframe(df)
+
+        # Guiding the user:
+        st.write("Press the button below when you are ready to find your next track.")
+    except NameError:
+        st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
 
 # Add activation button:
 state = st.button("Find your next track") # Press when ready
@@ -573,19 +580,24 @@ elif audiofeat == True and name_of_feat == 'Danceability':
     st.markdown(f"[![Foo]({image_url})]({song_uri})")
     st.caption("Click image for redirection to Spotify.")
 else: # If go button is pressed but advanced settings switches are not pressed:
-    recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
-    artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-    song_name = (recomms['tracks'][0]['name']) # song name 
-    song_uri = (recomms['tracks'][0]['uri']) # uri name 
-    image_url = recomms['tracks'][0]['album']['images'][0]['url']
-    img_data = requests.get(image_url).content
-    with open('image_name.jpg', 'wb') as handler:
-        handler.write(img_data)
-    st.subheader(f"Here is your next track:")
-    st.write(f"Song: {song_name}")
-    st.write(f"By: {artist_name}")
-    st.markdown(f"[![Foo]({image_url})]({song_uri})")
-    st.caption("Click image for redirection to Spotify.")
+    try:
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
+    except NameError:
+        st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
+
+
 
 # Make expandable instructions on how to use:
 with st.expander("How to use"):
@@ -593,9 +605,9 @@ with st.expander("How to use"):
     st.write("DJ ASSISTANT is an AI-based song recommender that can assist you in creating a coherent and streamlined DJ-set without ever being afraid of embarrassing crossfades. All you need to get started is a song that you like. DJ ASSISTANT will then proceed to recommend a similar song that you can use as the next track for your set.")
     st.write("It works like this:")
     st.write("1. Specify the artist and name of a track that you like.")
-    st.write("2. If you want the recommended song to be in the same key* or have specific BPM requirements, you can specify this under 'Advanced features'.")
+    st.write("2. If you want the recommended song to be in the same key* or have specific requirements for BPM or a selection of auditory features, you can specify this under 'Advanced features'.")
     st.write("3. Press the 'Find your next track'-button to let DJ ASSISTANT work its magic.") 
     st.write("4. Click on the song artwork for a direct redirection to the song on Spotify.") 
     st.write(" ")
-    st.caption("NOTE: You can find the BPM, key and duration of your self-chosen track in the table that appears when you have specified artist- and song name")
+    st.caption("NOTE: You can find the BPM, key, duration and various auditory feature-scores for your self-chosen track in the table that appears when you have specified artist- and song name.")
     st.caption("*: DJ ASSISTANT does currently not discriminate minor and major keys and will only filter based on the 'root'-key (e.g. G or C#).")
