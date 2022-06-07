@@ -62,10 +62,12 @@ with st.expander("Advanced features"): # Unfold advanced features.
 
         
 # Specifying not to move on with the script until user has entered names:
-if len(Name_of_Artist) == 0: 
-    st.write("Welcome to DJ ASSISTANT — Think of a track that you like and enter the name of the artist and song.") 
-elif len(Name_of_song) == 0:
-    st.write("Good, now you just need to enter name of the song.")
+if len(Name_of_Artist) == 0 and len(Name_of_song) == 0: 
+    st.write("Welcome to DJ ASSISTANT — Think of a track that you like and enter the name of the artist and song ✍️") 
+elif len(Name_of_song) == 0 and len(Name_of_Artist) > 0:
+    st.write("Good, now you just need to enter name of the song ✍️")
+elif len(Name_of_Artist) == 0 and len(Name_of_song) > 0:
+    st.write("Good, now you just need to enter name of the artist ✍️")
 else: # Names are specified -> move on.
     Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track") # Load the data for the specified track.
 
@@ -119,7 +121,7 @@ else: # Names are specified -> move on.
 
 
         # Present user with info about the chosen song:    
-        st.write(f"Info about '{Name_of_song}' by {Name_of_Artist}:")
+        st.write(f"Info about '{Name_of_song}' by {Name_of_Artist} 🎧:")
         st.dataframe(df)
 
         # Guiding the user:
@@ -128,7 +130,7 @@ else: # Names are specified -> move on.
         st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
 
 # Add activation button:
-state = st.button("Find your next track") # Press when ready
+state = st.button("Find your next track  🔊") # Press when ready
 
 
 try:
