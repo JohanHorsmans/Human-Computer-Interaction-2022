@@ -122,7 +122,11 @@ else: # Names are specified -> move on.
 
         # Present user with info about the chosen song:    
         st.write(f"Info about '{Name_of_song}' by {Name_of_Artist} 🎧:")
-        st.dataframe(df)
+        if audiofeat == True:
+            st.dataframe(df)
+        else:
+            df1 = df[['Key', 'BPM', "Duration"]]
+            st.dataframe(df1)
 
         # Guiding the user:
         st.write("Press the button below when you are ready to find your next track.")
