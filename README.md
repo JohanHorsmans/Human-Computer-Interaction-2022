@@ -5,7 +5,7 @@
     <img src="README_images/DJA_ICON.png" alt="Logo" width="151.25" height="103">
   </a>
 
-  <h3 align="center">DJ Assistant</h3>
+  <h2 align="center">DJ Assistant</h2>
 
   <p align="center">
     Human Computer Interaction Exam Project 2022
