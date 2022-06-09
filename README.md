@@ -66,7 +66,7 @@ bash create_venv.sh
 source HCI_Exam/bin/activate
 ```
 
-You should now be ready to run the code by running the following command in your python-editor of choice with the virtual environment activated:
+You should now be ready to run the code by running the following command in your terminal of choice in order to launch DJ Assistant:
 
 ```
 streamlit run DJ_assistant.py
