@@ -607,4 +607,4 @@ with st.expander("How to use"):
     st.write("4. Click on the song artwork for a direct redirection to the song on Spotify.") 
     st.write(" ")
     st.caption("NOTE: You can find the BPM, key, duration and various auditory feature-scores for your self-chosen track in the table that appears when you have specified artist- and song name.")
-    st.caption("*: DJ ASSISTANT does currently not discriminate minor and major keys and will only filter based on the 'root'-key (e.g. G or C#).")
+    st.caption("*: DJ ASSISTANT does currently not discriminate minor and major keys and will only filter based on the 'root'-key (e.g. C# minor and C# major are both assigned C# as their key).")
