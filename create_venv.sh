@@ -9,15 +9,16 @@ pip --version
 pip install --upgrade pip
 pip --version
 
-# problems when installing from requirements.txt
+# Install packages
 pip install ipython
 pip install jupyter
 pip install matplotlib
 pip install plotly
 
+
 python -m ipykernel install --user --name=$VENVNAME
 
-#test -f requirements.txt && pip install -r requirements.txt
+test -f requirements.txt && pip install -r requirements.txt
 
 deactivate
 echo "build $VENVNAME"
