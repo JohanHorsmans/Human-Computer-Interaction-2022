@@ -8,7 +8,7 @@
   <h3 align="center">DJ Assistant</h3>
 
   <p align="center">
-    Spatial analysis exam project 2021
+    Human Computer Interaction Exam Project 2022
     <br />
     <a href="https://github.com/JohanHorsmans/Human-Computer-Interaction-2022/blob/master/FINAL.pdf"><strong>Read the report»</strong></a>
     <br />
