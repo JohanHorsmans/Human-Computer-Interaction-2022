@@ -65,7 +65,7 @@ with st.expander("Advanced features"): # Unfold advanced features.
 if len(Name_of_Artist) == 0 and len(Name_of_song) == 0: 
     st.write("Welcome to DJ ASSISTANT — Think of a track that you like and enter the name of the artist and song ✍️") 
 elif len(Name_of_song) == 0 and len(Name_of_Artist) > 0:
-    st.write("Good, now you just need to enter name of the song ✍️")
+    st.write("Good, now you just need to enter the name of the song ✍️")
 elif len(Name_of_Artist) == 0 and len(Name_of_song) > 0:
     st.write("Good, now you just need to enter name of the artist ✍️")
 else: # Names are specified -> move on.
