@@ -28,8 +28,6 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 #### STREAMLIT ####
 
-Types_of_Features = ("Danceability", "Energy", "Valence")
-
 
 # Create header (HTML used to center text):
 st.markdown("<h1 style='text-align: center; color: white;'>DJ ASSISTANT</h1>", unsafe_allow_html=True) # Header
@@ -38,6 +36,8 @@ st.markdown("<h1 style='text-align: center; color: white;'>DJ ASSISTANT</h1>", u
 Name_of_Artist = st.text_input("Artist name:") # Input artist name
 Name_of_song = st.text_input("Song name:") # Input song name
 
+# Define the auditory features that should be used for advanced filtering:
+Types_of_Features = ("Danceability", "Energy", "Valence")
 
 # Add optional advanced customizability features and toogle switches:
 with st.expander("Advanced features"): # Unfold advanced features.
@@ -87,8 +87,6 @@ else: # Names are specified -> move on.
         # Load audio features for song:
         your_song_feats = (sp.audio_features(track_uri)[0])
 
-        #st.write(round(your_song_feats["tempo"])) # Sanity check
-
         # Save features as dataframe:
         df = pd.DataFrame(your_song_feats, index=[0])
 
@@ -119,19 +117,17 @@ else: # Names are specified -> move on.
         # Reorder columns:
         df = df[['Key', 'BPM' ,"Danceability","Energy","Valence", "Duration"]]
 
-
         # Present user with info about the chosen song:    
         st.write(f"Info about '{Name_of_song}' by {Name_of_Artist} 🎧:")
         st.dataframe(df)
         
         # Guiding the user:
         st.write("Press the button below when you are ready to find your next track.")
-    except NameError:
+    except NameError: # Specify error message.
         st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
 
 # Add activation button:
 state = st.button("Find your next track  🔊") # Press when ready
-
 
 try:
     # If button is pressed and advanced settings switch is also pressed (various combinations of advanced feature-specifications are taken into account in the following loops):
@@ -580,19 +576,19 @@ try:
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
     else: # If go button is pressed but advanced settings switches are not pressed:
-            recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
-            artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
-            song_name = (recomms['tracks'][0]['name']) # song name 
-            song_uri = (recomms['tracks'][0]['uri']) # uri name 
-            image_url = recomms['tracks'][0]['album']['images'][0]['url']
-            img_data = requests.get(image_url).content
-            with open('image_name.jpg', 'wb') as handler:
-                handler.write(img_data)
-            st.subheader(f"Here is your next track:")
-            st.write(f"Song: {song_name}")
-            st.write(f"By: {artist_name}")
-            st.markdown(f"[![Foo]({image_url})]({song_uri})")
-            st.caption("Click image for redirection to Spotify.")
+        recomms = sp.recommendations(seed_tracks = track_uri, limit=1)
+        artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
+        song_name = (recomms['tracks'][0]['name']) # song name 
+        song_uri = (recomms['tracks'][0]['uri']) # uri name 
+        image_url = recomms['tracks'][0]['album']['images'][0]['url']
+        img_data = requests.get(image_url).content
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        st.subheader(f"Here is your next track:")
+        st.write(f"Song: {song_name}")
+        st.write(f"By: {artist_name}")
+        st.markdown(f"[![Foo]({image_url})]({song_uri})")
+        st.caption("Click image for redirection to Spotify.")
 except NameError:
         st.error("Oops! Could not find that song. Please, double check your spelling or try another song...")
 except IndexError:
