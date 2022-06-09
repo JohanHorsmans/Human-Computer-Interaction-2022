@@ -44,7 +44,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About the project
 There are many different factors one needs to consider when curating songs for a DJ set. Since songs need to be crossfaded into a continuous and uninterrupted stream of music, it is required that tracks have congruent tempo and keys while, simultaneously, complementing
-each other aesthetically (Katz, 2012; Steventon, 2014). Nonetheless, the amount of amateur DJs are on the rise and even most professionals are not trained in music theory. Followingly, these concepts can be difficult to relate to for a substantial portion of the DJ community.
+each other aesthetically. Nonetheless, the amount of amateur DJs are on the rise and even most professionals are not trained in music theory. Followingly, these concepts can be difficult to relate to for a substantial portion of the DJ community.
 The following repository presents a solution to this problem, namely, the DJ Assistant app, which allows users to get song recommendations that are congruent with a prespecified track on the aforementioned parameters.
 
 **See <a href="Human_Computer_Interaction_Synopsis.pdf">```Human_Computer_Interaction_Synopsis.pdf```</a> for the written synopsis.** The syniosis contains the theoretical and practical background behind the product as well as a thorough guide of different use cases and an
