@@ -92,11 +92,11 @@ Distributed under the [MIT License](https://opensource.org/licenses/MIT). See ``
 ## Contact
 
 Feel free to write the author Johan Horsmans for any questions regarding the scripts.
-You may do so through my emails [Johan](mailto:201810219@post.au.dk)
+You may do so through my email [Johan](mailto:201810219@post.au.dk)
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-I would like to extend our gratitude towards the following:
+I would like to extend my gratitude towards the following:
 * [Python](https://www.python.org/) - Software used for conducting the analysis.
 * [Streamlit](https://docs.streamlit.io/) - Framework used for creating the app.
 * [Spotify](https://www.spotify.com/us/) - For providing an available API.
