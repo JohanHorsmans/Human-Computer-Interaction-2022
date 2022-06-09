@@ -91,7 +91,7 @@ Distributed under the [MIT License](https://opensource.org/licenses/MIT). See ``
 ## Contact
 
 Feel free to write the author (Johan Horsmans) for any questions regarding the scripts.
-You may do so through my [email](mailto:201810219@post.au.dk)
+You may do so through my [email](mailto:201810219@post.au.dk).
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
