@@ -10,7 +10,7 @@
   <p align="center">
     Human Computer Interaction Exam Project 2022
     <br />
-    <a href="https://github.com/JohanHorsmans/Human-Computer-Interaction-2022/blob/master/FINAL.pdf"><strong>Read the report»</strong></a>
+    <a href="https://github.com/JohanHorsmans/Human-Computer-Interaction-2022/blob/master/Human%20Computer%20Interaction%20Exam%20-%20Johan%20Horsmans%20-%20Final.pdf"><strong>Read the report»</strong></a>
     <br />
     <a href="https://github.com/JohanHorsmans/Human-Computer-Interaction-2022/blob/master/DJ_assistant.py">View main script</a>
     ·
