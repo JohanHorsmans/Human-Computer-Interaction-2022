@@ -47,7 +47,7 @@ There are many different factors one needs to consider when curating songs for a
 each other aesthetically. Nonetheless, the amount of amateur DJs are on the rise and even most professionals are not trained in music theory. Followingly, these concepts can be difficult to relate to for a substantial portion of the DJ community.
 The following repository presents a solution to this problem, namely, the DJ Assistant app, which allows users to get song recommendations that are congruent with a prespecified track on the aforementioned parameters.
 
-**See <a href="Human_Computer_Interaction_Synopsis.pdf">```Human_Computer_Interaction_Synopsis.pdf```</a> for the written synopsis.** The syniosis contains the theoretical and practical background behind the product as well as a thorough guide of different use cases and an
+**See <a href="https://github.com/JohanHorsmans/Human-Computer-Interaction-2022/blob/master/Human%20Computer%20Interaction%20Exam%20-%20Johan%20Horsmans%20-%20Final.pdf">```Human_Computer_Interaction_Synopsis.pdf```</a> for the written synopsis.** The syniosis contains the theoretical and practical background behind the product as well as a thorough guide of different use cases and an
 analysis of how various theories from the field of Human-Computer Interaction have been utilized and implemented in the UI. Lastly, the limitations and potential future prospects of DJ Assistant are discussed.
 
 <!-- GETTING STARTED -->
