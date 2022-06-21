@@ -4,9 +4,16 @@ body {
 }
 
 .stButton>button {
-    color: #dce2dc;
+    color: lightgreen;
     border-radius: 0%;
-    border-color: aquamarine;
+    border-color: lightgreen;
     height: 3em;
     width: 12em;
+    box-shadow: none;
 }
+
+div.stButton > button:first-child {
+    background-color: #22222218;height:3em;width:12em;border-radius:0%;box-shadow: none;color: lightgreen
+
+    }    
+

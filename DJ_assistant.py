@@ -28,9 +28,12 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 #### STREAMLIT ####
 
-
 # Create header (HTML used to center text):
 st.markdown("<h1 style='text-align: center; color: white;'>DJ ASSISTANT</h1>", unsafe_allow_html=True) # Header
+
+st.write("Hi! Welcome to DJ ASSISTANT 👋")
+st.write("Think of a track that you like and enter the name of the artist and song in the fields below ✍️") 
+
 
 # Define text input widgets for artist- and song name:
 Name_of_Artist = st.text_input("Artist name:") # Input artist name
@@ -60,16 +63,17 @@ with st.expander("Advanced features"): # Unfold advanced features.
             st.caption("- Source: https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/")
             st.write("")
 
-        
+
 # Specifying not to move on with the script until user has entered names:
 if len(Name_of_Artist) == 0 and len(Name_of_song) == 0: 
-    st.write("Welcome to DJ ASSISTANT — Think of a track that you like and enter the name of the artist and song ✍️") 
+    st.write("Before pressing the big button below, you need to enter song details 👆") 
 elif len(Name_of_song) == 0 and len(Name_of_Artist) > 0:
-    st.write("Good, now you just need to enter the name of the song ✍️")
+    st.write("Good, now you just need to enter the name of the song 📝")
 elif len(Name_of_Artist) == 0 and len(Name_of_song) > 0:
-    st.write("Good, now you just need to enter name of the artist ✍️")
+    st.write("Awesome, now you just need to enter name of the artist 📝")
 else: # Names are specified -> move on.
     Data = spotify.search({"artist": f"{Name_of_Artist}", "track": f"{Name_of_song}"}, search_type="track") # Load the data for the specified track.
+
 
 
     metadata = [] # Create empty list for metadata.
@@ -608,3 +612,4 @@ with st.expander("How to use"):
     st.write(" ")
     st.caption("NOTE: You can find the BPM, key, duration and various auditory feature-scores for your self-chosen track in the table that appears when you have specified artist- and song name.")
     st.caption("*: DJ ASSISTANT does currently not discriminate minor and major keys and will only filter based on the 'root'-key (e.g. C# minor and C# major are both assigned C# as their key).")
+
