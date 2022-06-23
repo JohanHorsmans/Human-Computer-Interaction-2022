@@ -44,15 +44,12 @@ Types_of_Features = ("Danceability", "Energy", "Valence")
 
 # Add optional advanced customizability features and toogle switches:
 with st.expander("Advanced features"): # Unfold advanced features.
-    mintempo = st.checkbox("Minimum BPM.") # Checkbox for min BPM.
-    maxtempo = st.checkbox("Maximum BPM.") # Checkbox for max BPM.
+    tempo = st.checkbox("BPM range.") # Checkbox for max BPM.
     key = st.checkbox("Same key.") # Checkbox for same key.
     audiofeat = st.checkbox("Minimum auditory feature.") # Checkbox for same key.
 
-    if mintempo == True: # If min BPM ticked...
-        tempo_min = st.slider("Minimum BPM:", 50, 250, None) # ... Present slider for specifying value.
-    if maxtempo == True: # If min BPM ticked...
-        tempo_max = st.slider("Maximum BPM:", 50, 250, None) # ... Present slider for specifying value.
+    if tempo == True: # If min BPM ticked...
+        tempo_min, tempo_max = st.slider("BPM range:", 50, 250, (110, 130)) # ... Present slider for specifying value.
     if audiofeat == True: 
         name_of_feat = st.selectbox("Selcet your auditory feature", Types_of_Features)
         feature_min = st.slider("Minimum value", 0.0, 1.0, None)
@@ -138,7 +135,7 @@ try:
     if state == False: # If go button is not pressed:
         st.write("") # Do nothing.
     # Four combinations:
-    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': # Specify which features should be specified for this specific sequence of code to be run.
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Danceability': # Specify which features should be specified for this specific sequence of code to be run.
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) # Recommend new song.
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # Define artist name.
         song_name = (recomms['tracks'][0]['name']) # Define song name. 
@@ -156,7 +153,7 @@ try:
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
         #### The above comment specifications are the same for the remaining if/else statements and are therefore left out ####
-    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Energy': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name'])
@@ -170,7 +167,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Valence': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name']) 
@@ -185,7 +182,7 @@ try:
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
     #### Triple combinations: 
-    elif key == True and mintempo == True and maxtempo == True: 
+    elif key == True and tempo == True: 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, target_key = key_target) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name']) 
@@ -199,7 +196,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Danceability': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_danceability = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name']) 
@@ -213,7 +210,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Energy': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Energy': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_energy = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name'])  
@@ -227,7 +224,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and mintempo == True and audiofeat == True and name_of_feat == 'Valence':
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Valence':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target, min_valence = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name']) 
@@ -241,7 +238,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Danceability': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_danceability = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name']) 
@@ -255,7 +252,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Energy': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_energy = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name'])
@@ -269,7 +266,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+    elif key == True and tempo == True and audiofeat == True and name_of_feat == 'Valence': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target, min_valence = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name'])
@@ -283,7 +280,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Danceability': 
+    elif tempo == True and audiofeat == True and name_of_feat == 'Danceability': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_danceability = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) 
         song_name = (recomms['tracks'][0]['name']) 
@@ -297,7 +294,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Energy': 
+    elif tempo == True and audiofeat == True and name_of_feat == 'Energy': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_energy = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name'])
@@ -311,7 +308,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and maxtempo == True and audiofeat == True and name_of_feat == 'Valence': 
+    elif tempo == True and audiofeat == True and name_of_feat == 'Valence': 
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max, min_valence = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name'])
         song_name = (recomms['tracks'][0]['name'])
@@ -326,7 +323,7 @@ try:
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
     # Double combinations:
-    elif key == True and mintempo == True:
+    elif key == True and tempo == True:
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, target_key = key_target)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -340,7 +337,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif key == True and maxtempo == True:
+    elif key == True and tempo == True:
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, target_key = key_target) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -354,7 +351,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and maxtempo == True:
+    elif tempo == True:
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, max_tempo = tempo_max) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -368,7 +365,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and audiofeat == True and name_of_feat == 'Danceability':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Danceability':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_danceability = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -382,7 +379,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and audiofeat == True and name_of_feat == 'Energy':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Energy':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_energy = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -396,7 +393,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif mintempo == True and audiofeat == True and name_of_feat == 'Valence':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Valence':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min, min_valence = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -410,7 +407,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif maxtempo == True and audiofeat == True and name_of_feat == 'Danceability':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Danceability':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_danceability = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -424,7 +421,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif maxtempo == True and audiofeat == True and name_of_feat == 'Energy':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Energy':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_energy = feature_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -438,7 +435,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif maxtempo == True and audiofeat == True and name_of_feat == 'Valence':
+    elif tempo == True and audiofeat == True and name_of_feat == 'Valence':
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max, min_valence = feature_min)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -495,7 +492,7 @@ try:
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
     # Single combinations:
-    elif mintempo == True:
+    elif tempo == True:
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, min_tempo = tempo_min) 
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
@@ -509,7 +506,7 @@ try:
         st.write(f"By: {artist_name}")
         st.markdown(f"[![Foo]({image_url})]({song_uri})")
         st.caption("Click image for redirection to Spotify.")
-    elif maxtempo == True:
+    elif tempo == True:
         recomms = sp.recommendations(seed_tracks = track_uri, limit=1, max_tempo = tempo_max)
         artist_name = (recomms['tracks'][0]['album']['artists'][0]['name']) # artist name
         song_name = (recomms['tracks'][0]['name']) # song name 
